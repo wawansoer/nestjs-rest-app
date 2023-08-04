@@ -1,19 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { User, UserDocument } from '../../schemas/user.schema';
+import axios from 'axios';
 
 @Injectable()
 export class UserService {
-    constructor(@InjectModel('User') private userModel: Model<UserDocument>) { }
-
-    async create(user: User): Promise<User> {
-        const newUser = new this.userModel(user);
-        return await newUser.save();
-    }
-
-    async findOne(userId: number): Promise<User> {
-        return await this.userModel.findById(userId).exec();
+    async getUserById(userId: number) {
+        const response = await axios.get(`https://reqres.in/api/users/${userId}`);
+        return response.data;
     }
 }
-

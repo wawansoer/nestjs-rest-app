@@ -1,18 +1,25 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { UserService } from './user.service';
-import { User } from '../../schemas/user.schema';
 
-@Controller('api/users')
+@Controller('api/user')
 export class UserController {
-    constructor(private readonly usersService: UserService) { }
-
-    @Post()
-    async createUser(@Body() user: User): Promise<User> {
-        return this.usersService.create(user);
-    }
+    constructor(private readonly userService: UserService) { }
 
     @Get(':userId')
-    async getUser(@Param('userId') userId: number): Promise<User> {
-        return this.usersService.findOne(userId);
+    async getUser(@Param('userId') userId: number) {
+        try {
+            const user = await this.userService.getUserById(userId);
+            return {
+                status: 'success',
+                message: 'User found!',
+                data: user,
+            };
+        } catch (error) {
+            return {
+                status: 'failed',
+                message: 'Failed get user',
+                data: error,
+            };
+        }
     }
 }
