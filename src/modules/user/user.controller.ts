@@ -1,6 +1,6 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Res } from '@nestjs/common';
 import { UserService } from './user.service';
-
+import { Response } from 'express';
 /**
  * Controller for handling user-related HTTP requests.
  */
@@ -14,27 +14,69 @@ export class UserController {
      * @returns The user data or an error message.
      */
     @Get(':userId')
-    async getUser(@Param('userId') userId: number) {
-        if (isNaN(userId)) {
-            return {
-                status: 'failed',
-                message: 'Invalid userId',
-                data: null,
-            };
-        }
+    async getUser(
+        @Param('userId') userId: number,
+        @Res() res: Response,
+    ) {
+
         try {
             const user = await this.userService.getUserById(userId);
-            return {
+            return res.status(200).json({
                 status: 'success',
                 message: 'User found!',
-                data: user,
-            };
+                data: user
+            });
         } catch (error) {
-            return {
+            return res.status(404).json({
                 status: 'failed',
-                message: 'Failed to get user',
-                data: error,
-            };
+                message: 'User not found!',
+                data: error
+            });
         }
     }
+
+    @Get(':userId/avatar')
+    async getAvatar(
+        @Param('userId') userId: number,
+        @Res() res: Response,
+    ) {
+        try {
+            const avatarBase64 = await this.userService.getAvatar(userId);
+
+            return res.status(200).json({
+                status: 'success',
+                message: 'User found!',
+                data: { avatar: avatarBase64, }
+            });
+        } catch (error) {
+            console.log(error)
+            return res.status(404).json({
+                status: 'success',
+                message: 'User not found!',
+                data: error,
+            });
+        }
+    }
+
+    @Delete(':userId/avatar')
+    async deleteAvatar(
+        @Param('userId') userId: number,
+        @Res() res: Response,
+    ) {
+        try {
+            await this.userService.deleteAvatar(userId);
+            return res.status(200).json({
+                status: 'success',
+                message: 'User avatar deleted successfully!',
+            });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({
+                status: 'error',
+                message: 'Failed to delete user avatar.',
+                data: error,
+            });
+        }
+    }
+
 }

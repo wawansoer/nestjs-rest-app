@@ -1,4 +1,5 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { UsersService } from './users.service';
 import { User } from '../../schemas/user.schema';
 
@@ -19,20 +20,24 @@ export class UsersController {
      * @returns The response object.
      */
     @Post()
-    async createUser(@Body() user: User) {
+    async createUser(
+        @Body() user: User,
+        @Res() res: Response,
+    ) {
         try {
             const createdUser = await this.usersService.create(user);
-            return {
+            return res.status(200).json({
                 status: 'success',
                 message: 'User created successfully',
                 data: createdUser,
-            };
+            });
+
         } catch (error) {
-            return {
+            return res.status(401).json({
                 status: 'failed',
-                message: 'Failed to create user',
-                data: error,
-            };
+                message: 'Failed add user!',
+                data: error
+            });
         }
     }
 }
