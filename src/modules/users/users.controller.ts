@@ -12,32 +12,28 @@ import { User } from '../../schemas/user.schema';
 
 @Controller('api/users')
 export class UsersController {
-    constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
-    /**
-     * Create a new user.
-     * @param user The user data.
-     * @returns The response object.
-     */
-    @Post()
-    async createUser(
-        @Body() user: User,
-        @Res() res: Response,
-    ) {
-        try {
-            const createdUser = await this.usersService.create(user);
-            return res.status(200).json({
-                status: 'success',
-                message: 'User created successfully',
-                data: createdUser,
-            });
-
-        } catch (error) {
-            return res.status(401).json({
-                status: 'failed',
-                message: 'Failed add user!',
-                data: error
-            });
-        }
+  /**
+   * Create a new user.
+   * @param user The user data.
+   * @returns The response object.
+   */
+  @Post()
+  async createUser(@Body() user: User, @Res() res: Response) {
+    try {
+      const createdUser = await this.usersService.create(user);
+      return res.status(200).json({
+        status: 'success',
+        message: 'User created successfully',
+        data: createdUser,
+      });
+    } catch (error) {
+      return res.status(401).json({
+        status: 'failed',
+        message: 'Failed add user!',
+        data: error,
+      });
     }
+  }
 }

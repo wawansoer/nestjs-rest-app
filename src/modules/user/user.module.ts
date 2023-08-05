@@ -9,6 +9,6 @@ import { Avatar, AvatarSchema } from '../../schemas/avatar.schema';
     MongooseModule.forFeature([{ name: Avatar.name, schema: AvatarSchema }]),
   ],
   providers: [UserService],
-  controllers: [UserController]
+  controllers: [UserController],
 })
-export class UserModule { }
+export class UserModule {}
